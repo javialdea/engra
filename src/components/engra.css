@@ -1,0 +1,242 @@
+.eg {
+  --e-skin: #fcd9ab;
+  --e-skin-2: #f1b985;
+  --e-line: #b9743f;
+  --e-blush: #f2837a;
+  --e-hair: #f6f3ec;
+  --e-hair-hi: #ffffff;
+  --e-hair-lo: #b3c3d8;
+  --e-hair-line: #8da1bb;
+  --e-brow: #9aa6b5;
+  --e-iris: #4a6b52;
+  --e-ink: #2b2118;
+  --e-shade: #15151b;
+  --e-frame: #b88a35;
+  --e-cardi: #1a8560;
+  --e-cardi-lo: #0b4a35;
+  --e-cardi-hi: #35a57b;
+  --e-cardi-line: #06362a;
+  --e-blouse: #fbf3e4;
+  --e-gold: #e0b95f;
+  --e-gold-hi: #f7e3a8;
+  --e-gold-lo: #b88a35;
+  --e-lips: #c4274a;
+  --e-lips-lo: #8c1633;
+  --e-pearl: #f6efe2;
+  --e-wood: #6b4a2e;
+
+  display: block;
+  flex-shrink: 0;
+  overflow: visible;
+}
+
+.eg__pop {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  animation: eg-pop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.eg__bob {
+  animation: eg-bob 4.2s ease-in-out infinite;
+}
+
+.eg__bun {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  animation: eg-sway 5s ease-in-out infinite;
+}
+
+.eg__lid {
+  transform-box: fill-box;
+  transform-origin: 50% 0%;
+  transform: scaleY(var(--lid, 0));
+  animation: eg-blink 5.4s infinite;
+}
+
+.eg__gaze {
+  animation: eg-gaze 9s ease-in-out infinite;
+}
+
+.eg--watchful .eg__gaze {
+  animation: eg-scan 3.4s ease-in-out infinite;
+}
+
+.eg__glint {
+  animation: eg-glint 7s ease-in-out infinite;
+}
+
+.eg__shades {
+  transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.eg__browR {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+}
+
+.eg--watchful .eg__browR {
+  animation: eg-brow 4.2s ease-in-out infinite;
+}
+
+.eg__tails {
+  transform-box: fill-box;
+  transform-origin: 50% 0%;
+  animation: eg-tails 6s ease-in-out infinite;
+}
+
+.eg__lens {
+  transform-box: fill-box;
+  transform-origin: 100% 100%;
+}
+
+.eg--watchful .eg__lens {
+  animation: eg-lens-scan 2.6s ease-in-out infinite alternate;
+}
+
+.eg--stern .eg__lens {
+  animation: eg-tsk 3.6s ease-in-out infinite;
+}
+
+.eg--still *,
+.eg--still {
+  animation: none !important;
+}
+
+@keyframes eg-pop {
+  0% {
+    transform: scale(0.88);
+  }
+  60% {
+    transform: scale(1.04);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes eg-bob {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-2.6px);
+  }
+}
+
+@keyframes eg-sway {
+  0%,
+  100% {
+    transform: rotate(-4deg);
+  }
+  50% {
+    transform: rotate(4deg);
+  }
+}
+
+@keyframes eg-blink {
+  0%,
+  90%,
+  100% {
+    transform: scaleY(var(--lid, 0));
+  }
+  93% {
+    transform: scaleY(1);
+  }
+  96% {
+    transform: scaleY(var(--lid, 0));
+  }
+}
+
+@keyframes eg-gaze {
+  0%,
+  42%,
+  100% {
+    transform: translate(0, 0);
+  }
+  50%,
+  62% {
+    transform: translate(-2px, 0.6px);
+  }
+  72%,
+  86% {
+    transform: translate(2px, -0.4px);
+  }
+}
+
+@keyframes eg-scan {
+  0%,
+  100% {
+    transform: translate(-2.2px, 0);
+  }
+  50% {
+    transform: translate(2.2px, 0);
+  }
+}
+
+@keyframes eg-glint {
+  0%,
+  68% {
+    transform: translateX(0);
+    opacity: 0;
+  }
+  72% {
+    opacity: 0.6;
+  }
+  88% {
+    transform: translateX(46px);
+    opacity: 0.6;
+  }
+  92%,
+  100% {
+    transform: translateX(52px);
+    opacity: 0;
+  }
+}
+
+@keyframes eg-brow {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  45%,
+  60% {
+    transform: translateY(-2.5px) rotate(-3deg);
+  }
+}
+
+@keyframes eg-tails {
+  0%,
+  100% {
+    transform: rotate(-2.5deg);
+  }
+  50% {
+    transform: rotate(2.5deg);
+  }
+}
+
+@keyframes eg-lens-scan {
+  from {
+    transform: rotate(-12deg);
+  }
+  to {
+    transform: rotate(9deg);
+  }
+}
+
+@keyframes eg-tsk {
+  0%,
+  22%,
+  100% {
+    transform: rotate(0);
+  }
+  6% {
+    transform: rotate(-10deg);
+  }
+  11% {
+    transform: rotate(8deg);
+  }
+  16% {
+    transform: rotate(-5deg);
+  }
+}

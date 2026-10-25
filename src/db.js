@@ -1,4 +1,5 @@
 import Dexie from 'dexie';
+import { DEFAULT_CATEGORIES, DEFAULT_SETTINGS, EMOJI_TO_ICON } from './lib/catalog.js';
 
 export const db = new Dexie('engra');
 
@@ -10,26 +11,43 @@ db.version(1).stores({
   settings: 'key',
 });
 
-const DEFAULT_CATEGORIES = [
-  { name: 'Comida', icon: '🍽️', budget: 300 },
-  { name: 'Transporte', icon: '🚌', budget: 60 },
-  { name: 'Ocio', icon: '🎉', budget: 100 },
-  { name: 'Casa', icon: '🏠', budget: 200 },
-  { name: 'Salud', icon: '💊', budget: 50 },
-  { name: 'Compras', icon: '🛍️', budget: 100 },
-  { name: 'Suscripciones', icon: '📱', budget: 40 },
-  { name: 'Otros', icon: '📦', budget: 50 },
-];
+// v2: iconos por clave (antes emojis), color por categoría, gastos fijos y ajustes nuevos.
+db.version(2)
+  .stores({
+    expenses: '++id, category, date',
+    categories: '++id, name',
+    savingsGoals: '++id, name',
+    contributions: '++id, goalId, date',
+    settings: 'key',
+    recurring: '++id, category',
+  })
+  .upgrade(async (tx) => {
+    const byName = Object.fromEntries(DEFAULT_CATEGORIES.map((c) => [c.name, c]));
+    let i = 0;
+    await tx.table('categories').toCollection().modify((c) => {
+      const known = byName[c.name];
+      c.icon = known?.icon ?? EMOJI_TO_ICON[c.icon] ?? 'tag';
+      c.color = known?.color ?? i++ % 7;
+    });
+    const hasData = (await tx.table('expenses').count()) > 0;
+    await tx.table('settings').toCollection().modify((s) => {
+      s.tone ??= DEFAULT_SETTINGS.tone;
+      s.theme = DEFAULT_SETTINGS.theme;
+      s.accent ??= DEFAULT_SETTINGS.accent;
+      s.haptics ??= DEFAULT_SETTINGS.haptics;
+      s.onboarded ??= hasData || Boolean(s.userName);
+    });
+  });
+
+export const ALL_TABLES = ['expenses', 'categories', 'savingsGoals', 'contributions', 'settings', 'recurring'];
 
 export async function ensureSeeded() {
   await db.transaction('rw', db.categories, db.settings, async () => {
-    const count = await db.categories.count();
-    if (count === 0) {
+    if ((await db.categories.count()) === 0) {
       await db.categories.bulkAdd(DEFAULT_CATEGORIES);
     }
-    const settings = await db.settings.get('app');
-    if (!settings) {
-      await db.settings.put({ key: 'app', userName: '', alertThreshold: 1 });
+    if (!(await db.settings.get('app'))) {
+      await db.settings.put({ ...DEFAULT_SETTINGS });
     }
   });
 }

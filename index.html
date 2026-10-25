@@ -1,13 +1,32 @@
 <!doctype html>
-<html lang="es">
+<html lang="es" data-theme="dark" data-accent="emerald">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/png" href="/icon-192.png" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <meta name="theme-color" content="#6b2c50" />
-    <meta name="description" content="Engra controla tus gastos: alta rápida, objetivos y avisos cuando te pasas del presupuesto." />
+    <meta name="theme-color" content="#04100b" />
+    <meta name="color-scheme" content="dark light" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Engra" />
+    <meta name="description" content="Engra, tu banquera de bolsillo: apunta gastos en dos segundos, controla tus presupuestos y ahorra con una señora que te vigila con cariño." />
     <title>Engra</title>
+    <script>
+      try {
+        var look = JSON.parse(localStorage.getItem('engra-look'));
+        if (look) {
+          document.documentElement.dataset.theme = look.theme;
+          document.documentElement.dataset.accent = look.accent;
+        }
+      } catch (e) {}
+    </script>
+    <style>
+      html {
+        background: #04100b;
+      }
+    </style>
   </head>
   <body>
     <div id="root"></div>
