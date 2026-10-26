@@ -5,7 +5,8 @@
 import { timingSafeEqual } from 'node:crypto';
 import Anthropic from '@anthropic-ai/sdk';
 
-const MODEL = 'claude-opus-5-5';
+// Leer una lista de movimientos es un trabajo sencillo: Haiku basta y cuesta una fracción de céntimo.
+const MODEL = 'claude-haiku-5-5';
 const IMAGE_TYPES = new Set(['image/jpeg', 'image/png', 'image/webp', 'image/gif']);
 const MAX_IMAGE_CHARS = 5_500_000; // ~4 MB en base64
 const MAX_CATEGORIES = 40;
@@ -71,11 +72,9 @@ export default async function handler(req, res) {
 
   try {
     const client = new Anthropic();
-    const message = await client.beta.messages.create({
+    const message = await client.messages.create({
       model: MODEL,
       max_tokens: 8000,
-      betas: ['server-side-fallback-2026-06-01'],
-      fallbacks: [{ model: 'claude-opus-4-8' }],
       system: SYSTEM,
       output_config: { effort: 'low', format: { type: 'json_schema', schema: schemaFor([...new Set(categories)]) } },
       messages: [
