@@ -46,6 +46,9 @@ export async function classifyScreenshot(file, categories) {
   if (!res.ok) {
     const error = new Error('classify_failed');
     error.status = res.status;
+    const body = await res.json().catch(() => ({}));
+    error.code = body.error;
+    error.detail = body.detail;
     throw error;
   }
 

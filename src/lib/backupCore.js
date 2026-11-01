@@ -18,6 +18,15 @@ export function buildBackup(data, now = new Date()) {
   };
 }
 
+export const BACKUP_REMINDER_DAYS = 14;
+
+/** ¿Toca recordar la copia de seguridad? Solo si ya hay datos que merezca la pena guardar. */
+export function needsBackupReminder({ expenseCount, lastBackupAt, now = new Date() }) {
+  if (expenseCount < 10) return false;
+  if (!lastBackupAt) return true;
+  return now - new Date(lastBackupAt) > BACKUP_REMINDER_DAYS * 86400000;
+}
+
 const reviveDate = (v) => {
   const d = new Date(v);
   return Number.isNaN(d.getTime()) ? new Date() : d;

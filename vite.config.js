@@ -4,6 +4,9 @@ import { VitePWA } from 'vite-plugin-pwa'
 
 // https://vite.dev/config/
 export default defineConfig({
+  // Puerto fijo: los datos del navegador se guardan por dirección, y si el puerto cambia la app "pierde" los gastos.
+  server: { port: 5191, strictPort: true },
+  preview: { port: 5191, strictPort: true },
   plugins: [
     react(),
     VitePWA({

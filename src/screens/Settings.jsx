@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useData } from '../data/DataProvider.jsx';
 import { useUi } from '../ui/UiContext.jsx';
 import Icon from '../components/Icon.jsx';
@@ -7,7 +7,8 @@ import { exportAllData, importAllData, resetAllData, updateSettings } from '../d
 import { ACCENTS } from '../lib/catalog.js';
 import { buildCsv, parseBackup } from '../lib/backupCore.js';
 import { downloadFile } from '../lib/download.js';
-import { toInputDate } from '../lib/format.js';
+import { dayLabel, toInputDate } from '../lib/format.js';
+import { isPersisted } from '../lib/storage.js';
 import { TONES, fill } from '../lib/voice.js';
 
 const TONE_MOOD = { warm: 'happy', formal: 'watchful', witty: 'stern' };
@@ -29,7 +30,12 @@ export default function Settings() {
   const [pending, setPending] = useState(null);
   const [error, setError] = useState('');
   const [confirmReset, setConfirmReset] = useState(false);
+  const [persisted, setPersisted] = useState(null);
   const pct = Math.round(settings.alertThreshold * 100);
+
+  useEffect(() => {
+    isPersisted().then(setPersisted);
+  }, []);
 
   const saveName = () => {
     const clean = name.trim();
@@ -39,6 +45,7 @@ export default function Settings() {
   const backup = async () => {
     const data = await exportAllData();
     downloadFile(`engra-copia-${toInputDate(new Date())}.json`, JSON.stringify(data, null, 2));
+    updateSettings({ lastBackupAt: new Date().toISOString() });
     ui.toast({ text: 'Copia de seguridad descargada. Guárdala bien.', mood: 'happy', duration: 2800 });
   };
 
@@ -140,6 +147,14 @@ export default function Settings() {
       <Group title="Tus datos" i={4}>
         <p className="muted">
           Todo se guarda en este dispositivo. {expenses.length} gastos, {categories.length} categorías y {goals.length} objetivos.
+        </p>
+        <p className={`notice ${persisted ? '' : 'notice--warn'}`}>
+          {persisted
+            ? 'Almacenamiento protegido: el navegador no borrará tus datos por su cuenta.'
+            : 'Este navegador podría borrar los datos si va justo de espacio o no abres la app en días. En iPhone, añade Engra a la pantalla de inicio, y haz copias de seguridad de vez en cuando.'}
+        </p>
+        <p className="muted">
+          {settings.lastBackupAt ? `Última copia de seguridad: ${dayLabel(settings.lastBackupAt).toLowerCase()}.` : 'Aún no has hecho ninguna copia de seguridad.'}
         </p>
         <div className="actions">
           <button className="btn btn--ghost" onClick={backup}><Icon name="download" size={18} /> Copia de seguridad</button>

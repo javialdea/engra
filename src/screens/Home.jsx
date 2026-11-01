@@ -12,6 +12,7 @@ import Donut, { donutSegments } from '../components/charts/Donut.jsx';
 import HistoryBars from '../components/charts/HistoryBars.jsx';
 import { useCountUp } from '../hooks/useCountUp.js';
 import { amountParts, formatPct, formatSmart, greeting, longDate, monthLabel } from '../lib/format.js';
+import { needsBackupReminder } from '../lib/backupCore.js';
 import { buildInsights } from '../lib/insights.js';
 import { compareWithPrevMonth, goalProgress, monthlyTotals, summarizeMonth } from '../lib/stats.js';
 import { engraVoice } from '../lib/voice.js';
@@ -145,6 +146,17 @@ export default function Home() {
           <span>
             <b>Apunta tu primer gasto</b>
             <small>Importe, categoría y listo. Tarda dos segundos.</small>
+          </span>
+          <Icon name="caretR" size={18} weight="bold" />
+        </button>
+      )}
+
+      {needsBackupReminder({ expenseCount: expenses.length, lastBackupAt: settings.lastBackupAt, now }) && (
+        <button className="cta glass rise" onClick={() => ui.setTab('settings')}>
+          <span className="cta__icon"><Icon name="download" size={22} weight="bold" /></span>
+          <span>
+            <b>Haz una copia de seguridad</b>
+            <small>Tus gastos solo viven en este dispositivo. Un toque y los tienes a salvo.</small>
           </span>
           <Icon name="caretR" size={18} weight="bold" />
         </button>

@@ -104,9 +104,15 @@ export default async function handler(req, res) {
     if (error instanceof Anthropic.RateLimitError) {
       res.status(429).json({ error: 'rate_limited' });
     } else if (error instanceof Anthropic.AuthenticationError) {
-      res.status(503).json({ error: 'not_configured' });
+      res.status(503).json({ error: 'bad_key' });
+    } else if (error instanceof Anthropic.BadRequestError && /credit balance/i.test(error.message)) {
+      res.status(402).json({ error: 'no_credit' });
+    } else if (error instanceof Anthropic.NotFoundError) {
+      res.status(502).json({ error: 'model_unavailable' });
     } else {
-      res.status(502).json({ error: 'upstream_error' });
+      // El mensaje de error de Anthropic no lleva secretos: se devuelve para poder diagnosticar desde la app.
+      console.error('classify upstream error', error?.status, error?.message);
+      res.status(502).json({ error: 'upstream_error', status: error?.status ?? null, detail: String(error?.message ?? error).slice(0, 300) });
     }
   }
 }

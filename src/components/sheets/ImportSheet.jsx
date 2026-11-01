@@ -21,6 +21,7 @@ export default function ImportSheet({ onClose }) {
   const [step, setStep] = useState('pick');
   const [lines, setLines] = useState([]);
   const [error, setError] = useState('');
+  const [detail, setDetail] = useState('');
   const [code, setCode] = useState(getAccessCode);
   const [askCode, setAskCode] = useState(() => !getAccessCode());
 
@@ -47,14 +48,21 @@ export default function ImportSheet({ onClose }) {
     } catch (err) {
       setStep('ready');
       if (err.status === 401) setAskCode(true);
+      setDetail(err.detail ?? '');
       setError(
         err.status === 404 || err.status === 405
           ? 'La lectura con IA solo funciona con la app publicada en internet. Mientras tanto, apunta los gastos a mano.'
           : err.status === 401
             ? 'El código de acceso no es correcto.'
-            : err.status === 503
-              ? 'La IA todavía no está configurada en el servidor (falta la clave de Anthropic o el código de acceso).'
-              : err.status === 429
+            : err.code === 'bad_key'
+              ? 'Anthropic rechaza la clave que hay en Vercel (ANTHROPIC_API_KEY). Cópiala de nuevo, sin espacios, y vuelve a desplegar.'
+              : err.code === 'no_credit'
+                ? 'La cuenta de Anthropic se ha quedado sin saldo. Recarga en console.anthropic.com.'
+                : err.code === 'model_unavailable'
+                  ? 'Anthropic no encuentra el modelo configurado. Avísame y lo cambio.'
+                  : err.status === 503
+                    ? 'Falta configurar en Vercel la clave de Anthropic (ANTHROPIC_API_KEY) o el código (ENGRA_ACCESS_CODE).'
+                    : err.status === 429
                 ? 'Demasiadas peticiones seguidas. Espera un minuto y vuelve a intentarlo.'
                 : err.message === 'empty'
                   ? 'No he encontrado movimientos en esa imagen. Prueba con otra captura más clara.'
@@ -114,7 +122,12 @@ export default function ImportSheet({ onClose }) {
           ) : (
             <button className="link" onClick={() => setAskCode(true)}>Cambiar código de acceso</button>
           )}
-          {error && <p className="notice notice--warn">{error}</p>}
+          {error && (
+            <p className="notice notice--warn">
+              {error}
+              {detail && <small className="muted"><br />Detalle técnico: {detail}</small>}
+            </p>
+          )}
         </div>
       )}
 

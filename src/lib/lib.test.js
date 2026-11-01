@@ -6,7 +6,7 @@ import { summarizeMonth, compareWithPrevMonth, monthlyTotals, goalProgress, stat
 import { fill, engraVoice, alertVoice, pick } from './voice.js';
 import { dueOccurrences, startKeyFor, nextOccurrence } from './recurring.js';
 import { topConcepts, categoryForConcept, normalizeConcept } from './concepts.js';
-import { buildBackup, parseBackup, buildCsv } from './backupCore.js';
+import { buildBackup, parseBackup, buildCsv, needsBackupReminder } from './backupCore.js';
 import { buildInsights } from './insights.js';
 import { pressKey, displayAmount, amountToText } from './amountInput.js';
 
@@ -200,6 +200,14 @@ test('teclado numérico: reglas de escritura', () => {
   assert.equal(displayAmount('1234,5'), '1.234,5');
   assert.equal(displayAmount(''), '0');
   assert.equal(amountToText(12.5), '12,5');
+});
+
+test('recordatorio de copia de seguridad', () => {
+  const day = 86400000;
+  assert.equal(needsBackupReminder({ expenseCount: 3, lastBackupAt: null, now }), false);
+  assert.equal(needsBackupReminder({ expenseCount: 30, lastBackupAt: null, now }), true);
+  assert.equal(needsBackupReminder({ expenseCount: 30, lastBackupAt: new Date(now - 3 * day).toISOString(), now }), false);
+  assert.equal(needsBackupReminder({ expenseCount: 30, lastBackupAt: new Date(now - 20 * day).toISOString(), now }), true);
 });
 
 test('insights: no hay nada sin datos y hay tarjetas con datos', () => {

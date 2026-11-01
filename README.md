@@ -15,10 +15,12 @@
 
 ```bash
 npm install
-npm run dev      # http://localhost:5173
+npm run dev      # http://localhost:5191
 npm test         # pruebas de la lógica (fechas, estadísticas, voz, copias…)
 npm run build    # versión de producción
 ```
+
+> **Tus datos viven en el navegador y por dirección.** `localhost:5191` y `engra.vercel.app` guardan cosas distintas, y el panel de vista previa de Claude Code no conserva el almacenamiento entre sesiones. Para uso real, usa la versión publicada (abajo) y haz copias de seguridad desde Ajustes; Engra te lo recuerda cada 14 días.
 
 La lectura de capturas necesita la función de `api/classify.js`, que solo funciona publicada (o con `vercel dev`).
 

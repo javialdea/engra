@@ -4,6 +4,7 @@ import { runRecurring } from './data/actions.js';
 import { ensureSeeded } from './db.js';
 import { UiProvider, useUi } from './ui/UiContext.jsx';
 import { useTheme } from './hooks/useTheme.js';
+import { requestPersistence } from './lib/storage.js';
 import BottomNav from './components/BottomNav.jsx';
 import Engra from './components/Engra.jsx';
 import Toasts from './components/Toasts.jsx';
@@ -34,6 +35,11 @@ function Main() {
 function Shell() {
   const { settings } = useData();
   useTheme(settings);
+
+  // Pide que el navegador proteja los datos (no los borre si va justo de espacio o no usas la app en días).
+  useEffect(() => {
+    requestPersistence();
+  }, []);
 
   // Al volver a abrir la app, apunta los gastos fijos que hayan tocado mientras tanto.
   useEffect(() => {
